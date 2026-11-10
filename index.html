@@ -37,6 +37,7 @@
       --chip: #e7dbc4;
       --shadow: 0 24px 60px rgba(64,42,20,.16);
       --card-shadow: 0 10px 30px rgba(64,42,20,.08);
+      --ease-strong: cubic-bezier(0.23, 1, 0.32, 1);
     }
     @media (prefers-color-scheme: dark) {
       :root {
@@ -517,12 +518,205 @@
     }
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
-      *, *::before, *::after { transition: none !important; }
+      *, *::before, *::after { transition: none !important; animation: none !important; }
     }
+    /* ---------- Filter stack + drive chips ---------- */
+    .filter-stack { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+    .drive-row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+    .drive-chip {
+      appearance: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 13px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--card-soft);
+      color: var(--muted);
+      font: 650 12.5px/1 "Bricolage Grotesque", sans-serif;
+      cursor: pointer;
+      transition: border-color .2s var(--ease-strong), background .2s var(--ease-strong), color .2s var(--ease-strong);
+    }
+    .drive-chip span {
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: var(--chip);
+      color: var(--ink);
+      font-size: 11px;
+      font-weight: 750;
+    }
+    .drive-chip[aria-pressed="true"] {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff6e8;
+    }
+    .drive-chip[aria-pressed="true"] span { background: rgba(255,246,232,.24); color: #fff6e8; }
+    .drive-chip:focus-visible, .plan-add:focus-visible, .tl-stop:focus-visible, .plan-actions button:focus-visible, .empty button:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 70%, white); outline-offset: 3px; }
+    .drive-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      width: fit-content;
+      margin-bottom: 14px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: var(--chip);
+      color: var(--ink);
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: .02em;
+    }
+    .drive-badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--gold-deep); }
+    .drive-badge.is-drive { background: color-mix(in srgb, var(--gold) 26%, var(--card)); }
+    .drive-badge.is-drive::before { background: var(--accent); }
+
+    /* ---------- Timeline ---------- */
+    .timeline {
+      margin-top: 18px;
+      padding: 22px 26px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--card);
+      box-shadow: var(--card-shadow);
+    }
+    .timeline-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
+    .timeline-head h2 { margin: 0; font-family: "Source Serif 4", serif; font-size: 24px; font-weight: 650; letter-spacing: -.02em; }
+    .timeline-head p { margin: 0; color: var(--muted); font-size: 13px; }
+    .tl-day { display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: start; padding: 10px 0; }
+    .tl-day + .tl-day { border-top: 1px solid var(--line); }
+    .tl-label {
+      padding-top: 7px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent-deep);
+    }
+    .tl-stops { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tl-stop {
+      appearance: none;
+      display: inline-flex;
+      align-items: baseline;
+      gap: 7px;
+      max-width: 100%;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--card-soft);
+      color: var(--ink);
+      font: 600 12.5px/1.3 "Bricolage Grotesque", sans-serif;
+      text-align: left;
+      cursor: pointer;
+      transition: border-color .2s var(--ease-strong), background .2s var(--ease-strong);
+    }
+    .tl-stop strong { color: var(--accent-deep); font-weight: 800; font-variant-numeric: tabular-nums; }
+    .tl-stop:hover { border-color: color-mix(in srgb, var(--accent) 55%, var(--line)); background: var(--accent-soft); }
+
+    /* ---------- Plan builder ---------- */
+    .plan-add {
+      appearance: none;
+      align-self: flex-start;
+      margin-top: 12px;
+      padding: 9px 15px;
+      border: 1px dashed color-mix(in srgb, var(--accent) 55%, var(--line));
+      border-radius: 999px;
+      background: transparent;
+      color: var(--accent-deep);
+      font: 700 13px/1 "Bricolage Grotesque", sans-serif;
+      cursor: pointer;
+      transition: background .2s var(--ease-strong), color .2s var(--ease-strong), border-color .2s var(--ease-strong);
+    }
+    .plan-add[aria-pressed="true"] {
+      background: var(--accent);
+      border: 1px solid var(--accent);
+      color: #fff6e8;
+    }
+    .plan {
+      margin-top: 36px;
+      padding: 22px 24px;
+      border: 1px solid color-mix(in srgb, var(--gold) 55%, var(--line));
+      border-radius: 16px;
+      background: color-mix(in srgb, var(--gold) 9%, var(--card));
+    }
+    .plan[hidden] { display: none !important; }
+    .plan-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+    .plan-head h2 { margin: 0; font-family: "Source Serif 4", serif; font-size: 24px; font-weight: 650; letter-spacing: -.02em; }
+    .plan-head .plan-scope { color: var(--muted); font-size: 12.5px; }
+    .plan-actions { display: flex; gap: 8px; margin-left: auto; }
+    .plan-actions button {
+      appearance: none;
+      padding: 9px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--card);
+      color: var(--ink);
+      font: 700 12.5px/1 "Bricolage Grotesque", sans-serif;
+      cursor: pointer;
+    }
+    .plan-actions button.primary { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+    .plan ol { margin: 16px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+    .plan li {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 10px 14px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--card);
+      font-size: 13.5px;
+    }
+    .plan li strong { font-weight: 750; }
+    .plan li .plan-when { color: var(--accent-deep); font-weight: 750; font-size: 12px; letter-spacing: .04em; text-transform: uppercase; }
+    .plan li .plan-where { color: var(--muted); font-size: 12.5px; }
+    .plan-note { margin: 12px 0 0; color: var(--muted); font-size: 12.5px; min-height: 1.2em; }
+
+    /* ---------- Empty state ---------- */
+    .empty {
+      margin-top: 30px;
+      padding: 30px 24px;
+      border: 1px dashed color-mix(in srgb, var(--accent) 45%, var(--line));
+      border-radius: 16px;
+      text-align: center;
+    }
+    .empty[hidden] { display: none !important; }
+    .empty strong { display: block; font-family: "Source Serif 4", serif; font-size: 22px; font-weight: 650; }
+    .empty span { display: block; margin-top: 6px; color: var(--muted); font-size: 13.5px; }
+    .empty button {
+      appearance: none;
+      margin-top: 16px;
+      padding: 10px 18px;
+      border: 0;
+      border-radius: 999px;
+      background: var(--ink);
+      color: var(--paper);
+      font: 700 13px/1 "Bricolage Grotesque", sans-serif;
+      cursor: pointer;
+    }
+
+    /* ---------- Motion ---------- */
+    .event-card.spotlight {
+      outline: 3px solid var(--accent);
+      outline-offset: 3px;
+      animation: spotlight .3s var(--ease-strong);
+    }
+    @keyframes spotlight {
+      0% { transform: scale(.99); }
+      55% { transform: scale(1.012); }
+      100% { transform: scale(1); }
+    }
+    @media (max-width: 620px) {
+      .filter-stack { align-items: stretch; width: 100%; }
+      .drive-row { justify-content: flex-start; }
+      .timeline { padding: 18px; }
+      .tl-day { grid-template-columns: 36px 1fr; gap: 10px; }
+      .plan-actions { margin-left: 0; }
+    }
+
     @media print {
       body { background: #fff; color: #111; }
       .page { width: 100%; padding: 0; }
-      .filters { display: none; }
+      .filters, .drive-row, .plan-add, .plan-actions { display: none; }
       .event-card, .event-card.featured { break-inside: avoid; box-shadow: none; }
     }
   </style>
@@ -538,6 +732,7 @@
       <div class="pulse" aria-label="Weekend overview">
         <span><i aria-hidden="true"></i>7 Saturday picks</span>
         <span><i aria-hidden="true"></i>4 Sunday picks</span>
+        <span><i aria-hidden="true"></i><span id="weekend-status">Nov 7 to 8, 2026</span></span>
       </div>
     </section>
 
@@ -573,16 +768,47 @@
       </div>
     </aside>
 
+    <section class="timeline" aria-labelledby="timeline-title">
+      <div class="timeline-head">
+        <h2 id="timeline-title">The weekend at a glance</h2>
+        <p>Every pick in time order. Tap one to jump straight to its card.</p>
+      </div>
+      <div class="tl-day">
+        <span class="tl-label">Sat</span>
+        <div class="tl-stops" id="tl-sat"></div>
+      </div>
+      <div class="tl-day">
+        <span class="tl-label">Sun</span>
+        <div class="tl-stops" id="tl-sun"></div>
+      </div>
+    </section>
+
     <section aria-labelledby="picks-title">
       <div class="toolbar">
         <div class="section-title">
           <h2 id="picks-title">The weekend board</h2>
           <p id="filter-status" aria-live="polite">Showing all 11 picks.</p>
         </div>
-        <div class="filters" role="group" aria-label="Filter events by day">
-          <button type="button" data-filter="all" aria-pressed="true">All</button>
-          <button type="button" data-filter="sat" aria-pressed="false">Saturday</button>
-          <button type="button" data-filter="sun" aria-pressed="false">Sunday</button>
+        <div class="filter-stack">
+          <div class="filters" role="group" aria-label="Filter events by day">
+            <button type="button" data-filter="all" aria-pressed="true">All</button>
+            <button type="button" data-filter="sat" aria-pressed="false">Saturday</button>
+            <button type="button" data-filter="sun" aria-pressed="false">Sunday</button>
+          </div>
+          <div class="drive-row" role="group" aria-label="Filter events by kind">
+            <button type="button" class="drive-chip" data-cat-filter="all" aria-pressed="true">All kinds</button>
+            <button type="button" class="drive-chip" data-cat-filter="markets" aria-pressed="false">Markets <span>7 picks</span></button>
+            <button type="button" class="drive-chip" data-cat-filter="art" aria-pressed="false">Art <span>4 picks</span></button>
+            <button type="button" class="drive-chip" data-cat-filter="family" aria-pressed="false">Family <span>6 picks</span></button>
+            <button type="button" class="drive-chip" data-cat-filter="music" aria-pressed="false">Music <span>1 pick</span></button>
+            <button type="button" class="drive-chip" data-cat-filter="shows" aria-pressed="false">Shows <span>2 picks</span></button>
+          </div>
+          <div class="drive-row" role="group" aria-label="Filter events by drive time">
+            <button type="button" class="drive-chip" data-drive-filter="all" aria-pressed="true">All drives</button>
+            <button type="button" class="drive-chip" data-drive-filter="town" aria-pressed="false">In town <span>8 picks</span></button>
+            <button type="button" class="drive-chip" data-drive-filter="drive" aria-pressed="false">San Angelo <span>90 min · 3 picks</span></button>
+            <button type="button" class="drive-chip" data-free-filter aria-pressed="false">Free only <span>2 picks</span></button>
+          </div>
         </div>
       </div>
 
@@ -759,6 +985,26 @@
       </div>
     </section>
 
+    <div class="empty" id="empty-state" hidden>
+      <strong>No picks match that mix.</strong>
+      <span>Try a wider drive, another kind, the other day, or drop the free filter.</span>
+      <button type="button" id="reset-filters">Show all 11 picks</button>
+    </div>
+
+    <section class="plan" id="plan" aria-labelledby="plan-title" hidden>
+      <div class="plan-head">
+        <h2 id="plan-title">My weekend plan</h2>
+        <span class="plan-scope" id="plan-count"></span>
+        <span class="plan-scope">Kept on this page for this visit only.</span>
+        <div class="plan-actions">
+          <button type="button" id="plan-copy" class="primary">Copy plan</button>
+          <button type="button" id="plan-clear">Clear</button>
+        </div>
+      </div>
+      <ol id="plan-list"></ol>
+      <p class="plan-note" id="plan-note" aria-live="polite"></p>
+    </section>
+
     <aside class="quick-note">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6 7 7M17 17l1.4 1.4M18.4 5.6 17 7M7 17l-1.4 1.4"/><circle cx="12" cy="12" r="4"/></svg>
       <div><strong>Abilene PM showers Saturday, cloudy Sunday.</strong><span> Saturday afternoon showers carry a 50% rain chance with a low of 49°; Sunday is cloudy with a high of 67°, low 52° and a 20% rain chance. San Angelo is wetter, so the outdoor picks there, the First Saturday Art Market on Saturday and the Retro One Vintage Market on Sunday, carry a real rain risk; the murder mystery at Swenson House is indoors and unaffected.</span></div>
@@ -774,23 +1020,249 @@
 
   <script>
     (function () {
-      var buttons = Array.prototype.slice.call(document.querySelectorAll('[data-filter]'));
+      var dayButtons = Array.prototype.slice.call(document.querySelectorAll('[data-filter]'));
+      var driveButtons = Array.prototype.slice.call(document.querySelectorAll('[data-drive-filter]'));
+      var catButtons = Array.prototype.slice.call(document.querySelectorAll('[data-cat-filter]'));
+      var catLabels = { markets: 'Markets', art: 'Art', family: 'Family', music: 'Music', shows: 'Shows' };
+      var catMap = {
+        'Abilene Farmers Market': ['markets', 'family'],
+        'The Grace Museum Exhibitions': ['art', 'family'],
+        'Christmas Carousel Market Hall': ['markets', 'family'],
+        'DFW Card Show: Abilene': ['markets', 'family'],
+        'Center for Contemporary Arts: 10th Annual National Exhibition': ['art'],
+        'First Saturday Art Market: Cozy Craft November': ['markets', 'art'],
+        'Ghouls and Gunpowder Murder Mystery': ['shows'],
+        'Retro One Vintage Market': ['markets', 'music'],
+        'Todd Oliver and His Talking Dog Irving': ['family', 'shows'],
+        'Midwinter Market: Alternative Holiday Shopping and Art Show': ['markets', 'art']
+      };
+      var freeButton = document.querySelector('[data-free-filter]');
       var sections = Array.prototype.slice.call(document.querySelectorAll('[data-section]'));
+      var cards = Array.prototype.slice.call(document.querySelectorAll('.event-card'));
       var status = document.getElementById('filter-status');
-      var labels = { all: 'Showing all 11 picks.', sat: 'Showing seven Saturday picks.', sun: 'Showing four Sunday picks.' };
+      var emptyState = document.getElementById('empty-state');
+      var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var state = { day: 'all', drive: 'all', cat: 'all', free: false };
+      var plan = [];
 
-      buttons.forEach(function (button) {
+      /* ---- Derive drive + start time from the card's own facts ---- */
+      function startMinutes(card) {
+        var text = card.querySelector('.event-days').textContent;
+        var m = text.match(/(\d{1,2}):(\d{2})/);
+        return m ? parseInt(m[1], 10) * 60 + parseInt(m[2], 10) : 9999;
+      }
+      function startLabel(card) {
+        var text = card.querySelector('.event-days').textContent;
+        var m = text.match(/(\d{1,2}:\d{2})/);
+        return m ? m[1] : '';
+      }
+      cards.forEach(function (card) {
+        var factsText = card.textContent;
+        var isDrive = factsText.indexOf('San Angelo') !== -1 && factsText.indexOf('(in town)') === -1;
+        card.setAttribute('data-drive', isDrive ? 'drive' : 'town');
+        card.setAttribute('data-cats', (catMap[card.querySelector('h3').textContent] || []).join(' '));
+        card.setAttribute('data-free', /Admission:<\/strong> free|Admission: free/.test(card.innerHTML) || factsText.indexOf('Admission: free') !== -1 ? '1' : '0');
+        var badge = document.createElement('span');
+        badge.className = 'drive-badge' + (isDrive ? ' is-drive' : '');
+        badge.textContent = isDrive ? 'San Angelo · about 1 hr 30 min drive' : 'In town · Abilene';
+        var body = card.querySelector('.event-body');
+        var deck = body.querySelector('.deck');
+        body.insertBefore(badge, deck.nextSibling);
+
+        var add = document.createElement('button');
+        add.type = 'button';
+        add.className = 'plan-add';
+        add.setAttribute('aria-pressed', 'false');
+        add.textContent = '+ Add to my plan';
+        body.appendChild(add);
+        add.addEventListener('click', function () { togglePlan(card, add); });
+        card._planBtn = add;
+      });
+
+      /* ---- Filtering: day x drive x free ---- */
+      function cardVisible(card) {
+        if (state.day !== 'all' && card.getAttribute('data-days') !== state.day) return false;
+        if (state.drive !== 'all' && card.getAttribute('data-drive') !== state.drive) return false;
+        if (state.cat !== 'all' && (' ' + card.getAttribute('data-cats') + ' ').indexOf(' ' + state.cat + ' ') === -1) return false;
+        if (state.free && card.getAttribute('data-free') !== '1') return false;
+        return true;
+      }
+      function applyFilters() {
+        var shown = 0;
+        cards.forEach(function (card) {
+          var vis = cardVisible(card);
+          card.hidden = !vis;
+          if (vis) shown++;
+        });
+        sections.forEach(function (section) {
+          var any = Array.prototype.some.call(section.querySelectorAll('.event-card'), function (c) { return !c.hidden; });
+          section.hidden = !any;
+        });
+        emptyState.hidden = shown !== 0;
+        var parts = [];
+        if (state.day === 'sat') parts.push('Saturday');
+        if (state.day === 'sun') parts.push('Sunday');
+        if (state.drive === 'town') parts.push('in town');
+        if (state.drive === 'drive') parts.push('San Angelo');
+        if (state.cat !== 'all') parts.push(catLabels[state.cat]);
+        if (state.free) parts.push('free');
+        status.textContent = shown === 11 && !parts.length
+          ? 'Showing all 11 picks.'
+          : 'Showing ' + shown + ' of 11 picks' + (parts.length ? ' (' + parts.join(', ') + ').' : '.');
+      }
+      function pressGroup(buttons, active) {
+        buttons.forEach(function (b) { b.setAttribute('aria-pressed', b === active ? 'true' : 'false'); });
+      }
+      dayButtons.forEach(function (button) {
         button.addEventListener('click', function () {
-          var filter = button.getAttribute('data-filter');
-          buttons.forEach(function (item) {
-            item.setAttribute('aria-pressed', item === button ? 'true' : 'false');
-          });
-          sections.forEach(function (section) {
-            section.hidden = filter !== 'all' && section.getAttribute('data-section') !== filter;
-          });
-          status.textContent = labels[filter];
+          state.day = button.getAttribute('data-filter');
+          pressGroup(dayButtons, button);
+          applyFilters();
         });
       });
+      driveButtons.forEach(function (button) {
+        button.addEventListener('click', function () {
+          state.drive = button.getAttribute('data-drive-filter');
+          pressGroup(driveButtons, button);
+          applyFilters();
+        });
+      });
+      catButtons.forEach(function (button) {
+        button.addEventListener('click', function () {
+          state.cat = button.getAttribute('data-cat-filter');
+          pressGroup(catButtons, button);
+          applyFilters();
+        });
+      });
+      freeButton.addEventListener('click', function () {
+        state.free = !state.free;
+        freeButton.setAttribute('aria-pressed', state.free ? 'true' : 'false');
+        applyFilters();
+      });
+      function resetFilters() {
+        state = { day: 'all', drive: 'all', cat: 'all', free: false };
+        pressGroup(dayButtons, dayButtons[0]);
+        pressGroup(driveButtons, driveButtons[0]);
+        pressGroup(catButtons, catButtons[0]);
+        freeButton.setAttribute('aria-pressed', 'false');
+        applyFilters();
+      }
+      document.getElementById('reset-filters').addEventListener('click', resetFilters);
+
+      /* ---- Timeline: tap a stop, land on its card ---- */
+      function buildTimeline() {
+        ['sat', 'sun'].forEach(function (day) {
+          var host = document.getElementById('tl-' + day);
+          var dayCards = cards.filter(function (c) { return c.getAttribute('data-days') === day; });
+          dayCards.sort(function (a, b) { return startMinutes(a) - startMinutes(b); });
+          dayCards.forEach(function (card) {
+            var stop = document.createElement('button');
+            stop.type = 'button';
+            stop.className = 'tl-stop';
+            var time = document.createElement('strong');
+            time.textContent = startLabel(card);
+            stop.appendChild(time);
+            stop.appendChild(document.createTextNode(card.querySelector('h3').textContent));
+            stop.addEventListener('click', function () {
+              if (card.hidden) resetFilters();
+              card.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
+              if (!reduced) {
+                card.classList.remove('spotlight');
+                void card.offsetWidth;
+                card.classList.add('spotlight');
+                window.setTimeout(function () { card.classList.remove('spotlight'); }, 1000);
+              }
+            });
+            host.appendChild(stop);
+          });
+        });
+      }
+      buildTimeline();
+
+      /* ---- Plan builder (this visit only, nothing stored) ---- */
+      var planSection = document.getElementById('plan');
+      var planList = document.getElementById('plan-list');
+      var planCount = document.getElementById('plan-count');
+      var planNote = document.getElementById('plan-note');
+      function dayRank(card) { return card.getAttribute('data-days') === 'sat' ? 0 : 1; }
+      function renderPlan() {
+        plan.sort(function (a, b) {
+          return dayRank(a) - dayRank(b) || startMinutes(a) - startMinutes(b);
+        });
+        planList.innerHTML = '';
+        plan.forEach(function (card) {
+          var li = document.createElement('li');
+          var when = document.createElement('span');
+          when.className = 'plan-when';
+          when.textContent = (dayRank(card) === 0 ? 'Sat' : 'Sun') + ' ' + startLabel(card);
+          var name = document.createElement('strong');
+          name.textContent = card.querySelector('h3').textContent;
+          var where = document.createElement('span');
+          where.className = 'plan-where';
+          where.textContent = card.getAttribute('data-drive') === 'drive' ? 'San Angelo, about 1 hr 30 min drive' : 'In town, Abilene';
+          li.appendChild(when); li.appendChild(name); li.appendChild(where);
+          planList.appendChild(li);
+        });
+        planSection.hidden = plan.length === 0;
+        planCount.textContent = plan.length ? plan.length + (plan.length === 1 ? ' pick' : ' picks') : '';
+      }
+      function togglePlan(card, btn) {
+        var idx = plan.indexOf(card);
+        if (idx === -1) {
+          plan.push(card);
+          btn.setAttribute('aria-pressed', 'true');
+          btn.textContent = '✓ In my plan';
+        } else {
+          plan.splice(idx, 1);
+          btn.setAttribute('aria-pressed', 'false');
+          btn.textContent = '+ Add to my plan';
+        }
+        planNote.textContent = '';
+        renderPlan();
+      }
+      document.getElementById('plan-clear').addEventListener('click', function () {
+        plan = [];
+        cards.forEach(function (card) {
+          card._planBtn.setAttribute('aria-pressed', 'false');
+          card._planBtn.textContent = '+ Add to my plan';
+        });
+        planNote.textContent = '';
+        renderPlan();
+      });
+      document.getElementById('plan-copy').addEventListener('click', function () {
+        var lines = ['My Abilene weekend plan, Nov 7 to 8, 2026'];
+        plan.forEach(function (card) {
+          lines.push((dayRank(card) === 0 ? 'Saturday' : 'Sunday') + ' ' + startLabel(card) + ': ' + card.querySelector('h3').textContent + ' (' + (card.getAttribute('data-drive') === 'drive' ? 'San Angelo, about 1 hr 30 min drive' : 'in town, Abilene') + ')');
+        });
+        var text = lines.join('\n');
+        function done() { planNote.textContent = 'Plan copied. Paste it anywhere you keep your weekend notes.'; }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done, function () { planNote.textContent = 'Copy was blocked here. Your plan is listed above.'; });
+        } else {
+          planNote.textContent = 'Copy is not available here. Your plan is listed above.';
+        }
+      });
+
+      /* ---- Weekend status line ---- */
+      (function () {
+        var el = document.getElementById('weekend-status');
+        var start = new Date('2026-11-07T08:00:00-06:00');
+        var end = new Date('2026-11-08T17:00:00-06:00');
+        var now = new Date();
+        if (now < start) {
+          var days = Math.floor((start - now) / 86400000);
+          var hours = Math.round(((start - now) % 86400000) / 3600000);
+          el.textContent = days > 0
+            ? 'Weekend starts in ' + days + (days === 1 ? ' day' : ' days')
+            : 'Weekend starts in about ' + hours + (hours === 1 ? ' hour' : ' hours');
+        } else if (now <= end) {
+          el.textContent = 'The weekend is on now';
+        } else {
+          el.textContent = 'That weekend has wrapped';
+        }
+      })();
+
+      applyFilters();
     })();
   </script>
 </body>
