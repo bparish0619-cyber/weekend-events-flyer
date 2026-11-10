@@ -9,7 +9,7 @@ The shareable weekend events flyer for Abilene, Texas: the week's events, shows,
 - **Wednesdays**: the full events digest rebuilds the flyer lineup and republishes it
 - **Fridays, about 12:00**: a weather-only refresh republishes the same flyer with the weekend forecast updated
 
-Each publish pushes the page here as the archive of record, uploads it to Cloudflare Pages, and verifies the live page.
+The page itself is built as a Muse artifact (`weekend-events-flyer`) and exported on publish to `~/workspace/cloudflare-sites/abileneweekend/index.html`. Each publish pushes the page here as the archive of record, uploads it to Cloudflare Pages, and verifies the live page.
 
 ## What gets in
 
